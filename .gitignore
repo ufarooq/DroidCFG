@@ -2,3 +2,5 @@
 build/kotlin
 AndroidStudioHarness/build/classes AndroidStudioHarness/build/generated AndroidStudioHarness/build/idea-sandbox AndroidStudioHarness/build/kotlin AndroidStudioHarness/build/libs AndroidStudioHarness/build/patchedPluginXmlFiles AndroidStudioHarness/build/resources AndroidStudioHarness/build/tmp FlowDroidCFG/build/classes FlowDroidCFG/build/libs FlowDroidCFG/build/publications FlowDroidCFG/build/tmp WalaCFG/build/classes WalaCFG/build/generated WalaCFG/build/tmp
 gradle/wrapper
+AndroidStudioHarness/build FlowDroidCFG/build WalaCFG/build
+debug.log
