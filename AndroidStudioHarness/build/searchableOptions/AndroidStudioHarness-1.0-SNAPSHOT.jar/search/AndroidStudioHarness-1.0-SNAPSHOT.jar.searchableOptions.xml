@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<options>
+  <configurable id="preferences.keymap" configurable_name="Keymap">
+    <option name="analyze" path="ActionManager" hit="Analyze and Harness Android App" />
+    <option name="and" path="ActionManager" hit="Analyze and Harness Android App" />
+    <option name="android" path="ActionManager" hit="Analyze and Harness Android App" />
+    <option name="app" path="ActionManager" hit="Analyze and Harness Android App" />
+    <option name="harness" path="ActionManager" hit="Analyze and Harness Android App" />
+    <option name="generate" path="ActionManager" hit="Generate Harness" />
+    <option name="harness" path="ActionManager" hit="Generate Harness" />
+  </configurable>
+</options>
+

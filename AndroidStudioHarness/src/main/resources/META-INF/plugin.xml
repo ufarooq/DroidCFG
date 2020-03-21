@@ -8,6 +8,7 @@
     <em>It generates Control Flow Graph for Android projects</em>
     ]]></description>
 
+    <idea-version since-build="193.6494.35"/>
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
     <depends>com.intellij.modules.platform</depends>

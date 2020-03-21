@@ -6,8 +6,8 @@ plugins {
     id 'signing'
 }
 
-group '$project_group'
-version '$project_version'
+group project_group
+version project_version
 
 sourceCompatibility = "$javaVersion"
 

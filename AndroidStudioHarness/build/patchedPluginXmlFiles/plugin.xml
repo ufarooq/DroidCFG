@@ -3,7 +3,6 @@
   <change-notes>
       Add change notes here.&lt;br&gt;
       &lt;em&gt;most HTML tags may be used&lt;/em&gt;</change-notes>
-  <idea-version since-build="193.6494" until-build="193.*"/>
   <id>edu.ucr.droidCFG</id>
   <name>DroidCFG</name>
   <vendor email="ufaro001@ucr.edu" url="http://cs.ucr.edu/~ufaro001">UCR</vendor>
@@ -11,6 +10,7 @@
     Android CFG plugin.&lt;br&gt;
     &lt;em&gt;It generates Control Flow Graph for Android projects&lt;/em&gt;
     </description>
+  <idea-version since-build="193.6494" until-build="193.*"/>
   <depends>com.intellij.modules.platform</depends>
   <depends>org.jetbrains.android</depends>
   <extensions defaultExtensionNs="com.intellij"/>
