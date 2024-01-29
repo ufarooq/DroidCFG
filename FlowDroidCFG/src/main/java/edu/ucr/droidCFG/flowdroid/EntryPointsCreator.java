@@ -8,7 +8,7 @@ import soot.*;
 import soot.jimple.infoflow.AbstractInfoflow;
 import soot.jimple.infoflow.android.InfoflowAndroidConfiguration;
 import soot.jimple.infoflow.android.callbacks.AbstractCallbackAnalyzer;
-import soot.jimple.infoflow.android.callbacks.CallbackDefinition;
+import soot.jimple.infoflow.android.callbacks.AndroidCallbackDefinition;
 import soot.jimple.infoflow.android.callbacks.DefaultCallbackAnalyzer;
 import soot.jimple.infoflow.android.callbacks.FastCallbackAnalyzer;
 import soot.jimple.infoflow.android.callbacks.filters.AlienFragmentFilter;
@@ -42,7 +42,7 @@ public class EntryPointsCreator {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected MultiMap<SootClass, CallbackDefinition> callbackMethods = new HashMultiMap<>();
+    protected MultiMap<SootClass, AndroidCallbackDefinition> callbackMethods = new HashMultiMap<>();
     protected MultiMap<SootClass, SootClass> fragmentClasses = new HashMultiMap<>();
 
     protected InfoflowAndroidConfiguration config = new InfoflowAndroidConfiguration();
@@ -77,7 +77,7 @@ public class EntryPointsCreator {
 
         // We can use either a specific platform JAR file or automatically
         // select the right one
-        if (config.getSootIntegrationMode() == InfoflowAndroidConfiguration.SootIntegrationMode.CreateNewInstace) {
+        if (config.getSootIntegrationMode() == InfoflowAndroidConfiguration.SootIntegrationMode.CreateNewInstance) {
             String platformDir = config.getAnalysisFileConfig().getAndroidPlatformDir();
             if (platformDir == null || platformDir.isEmpty())
                 throw new RuntimeException("Android platform directory not specified");
@@ -108,7 +108,7 @@ public class EntryPointsCreator {
         // Reset our object state
 
         config.getAnalysisFileConfig().setTargetAPKFile(apk.getAbsolutePath());
-        config.setSootIntegrationMode(InfoflowAndroidConfiguration.SootIntegrationMode.CreateNewInstace);
+        config.setSootIntegrationMode(InfoflowAndroidConfiguration.SootIntegrationMode.CreateNewInstance);
         // Perform some sanity checks on the configuration
         if (config.getSourceSinkConfig().getEnableLifecycleSources() && config.getIccConfig().isIccEnabled()) {
             logger.warn("ICC model specified, automatically disabling lifecycle sources");
@@ -116,7 +116,7 @@ public class EntryPointsCreator {
         }
 
         // Start a new Soot instance
-        if (config.getSootIntegrationMode() == InfoflowAndroidConfiguration.SootIntegrationMode.CreateNewInstace) {
+        if (config.getSootIntegrationMode() == InfoflowAndroidConfiguration.SootIntegrationMode.CreateNewInstance) {
             G.reset();
             initializeSoot();
         }
@@ -411,17 +411,17 @@ public class EntryPointsCreator {
         if (component == null) {
             // Get all callbacks for all components
             for (SootClass sc : this.callbackMethods.keySet()) {
-                Set<CallbackDefinition> callbackDefs = this.callbackMethods.get(sc);
+                Set<AndroidCallbackDefinition> callbackDefs = this.callbackMethods.get(sc);
                 if (callbackDefs != null)
-                    for (CallbackDefinition cd : callbackDefs)
+                    for (AndroidCallbackDefinition cd : callbackDefs)
                         callbackMethodSigs.put(sc, cd.getTargetMethod());
             }
         } else {
             // Get the callbacks for the current component only
             for (SootClass sc : components) {
-                Set<CallbackDefinition> callbackDefs = this.callbackMethods.get(sc);
+                Set<AndroidCallbackDefinition> callbackDefs = this.callbackMethods.get(sc);
                 if (callbackDefs != null)
-                    for (CallbackDefinition cd : callbackDefs)
+                    for (AndroidCallbackDefinition cd : callbackDefs)
                         callbackMethodSigs.put(sc, cd.getTargetMethod());
             }
         }
@@ -450,7 +450,7 @@ public class EntryPointsCreator {
             Set<SootClass> components = new HashSet<>(2);
             components.add(component);
 
-            String applicationName = manifest.getApplicationName();
+            String applicationName = manifest.getApplication().getName();
             if (applicationName != null && !applicationName.isEmpty())
                 components.add(Scene.v().getSootClassUnsafe(applicationName));
             return components;
@@ -701,8 +701,8 @@ public class EntryPointsCreator {
         // filter out callbacks even if the respective component is only
         // analyzed later.
         AbstractCallbackAnalyzer jimpleClass = callbackClasses == null
-                ? new DefaultCallbackAnalyzer(config, entryPointClasses, callbackFile)
-                : new DefaultCallbackAnalyzer(config, entryPointClasses, callbackClasses);
+                ? new DefaultCallbackAnalyzer(config, entryPointClasses)
+                : new DefaultCallbackAnalyzer(config, entryPointClasses);
         if (valueProvider != null)
             jimpleClass.setValueProvider(valueProvider);
         jimpleClass.addCallbackFilter(new AlienHostComponentFilter(entrypoints));
@@ -831,8 +831,8 @@ public class EntryPointsCreator {
         // the host activity
         AlienFragmentFilter fragmentFilter = new AlienFragmentFilter(invertMap(fragmentClasses));
         fragmentFilter.reset();
-        for (Iterator<Pair<SootClass, CallbackDefinition>> cbIt = this.callbackMethods.iterator(); cbIt.hasNext(); ) {
-            Pair<SootClass, CallbackDefinition> pair = cbIt.next();
+        for (Iterator<Pair<SootClass, AndroidCallbackDefinition>> cbIt = this.callbackMethods.iterator(); cbIt.hasNext(); ) {
+            Pair<SootClass, AndroidCallbackDefinition> pair = cbIt.next();
 
             // Check whether the filter accepts the given mapping
             if (!fragmentFilter.accepts(pair.getO1(), pair.getO2().getTargetMethod()))
@@ -906,7 +906,7 @@ public class EntryPointsCreator {
                                 SootMethod callbackMethod = currentClass.getMethodUnsafe(subSig);
                                 if (callbackMethod != null) {
                                     if (this.callbackMethods.put(callbackClass,
-                                            new CallbackDefinition(callbackMethod, smViewOnClick, CallbackDefinition.CallbackType.Widget)))
+                                            new AndroidCallbackDefinition(callbackMethod, smViewOnClick, AndroidCallbackDefinition.CallbackType.Widget)))
                                         hasNewCallback = true;
                                     break;
                                 }
@@ -933,7 +933,7 @@ public class EntryPointsCreator {
                     Set<AndroidLayoutControl> controls = lfp.getUserControls().get(layoutFileName);
                     if (controls != null) {
                         for (AndroidLayoutControl lc : controls)
-                            if (!SystemClassHandler.isClassInSystemPackage(lc.getViewClass().getName()))
+                            if (!SystemClassHandler.v().isClassInSystemPackage(lc.getViewClass().getName()))
                                 registerCallbackMethodsForView(callbackClass, lc);
                     }
                 } else
@@ -962,7 +962,7 @@ public class EntryPointsCreator {
      */
     private void registerCallbackMethodsForView(SootClass callbackClass, AndroidLayoutControl lc) {
         // Ignore system classes
-        if (SystemClassHandler.isClassInSystemPackage(callbackClass.getName()))
+        if (SystemClassHandler.v().isClassInSystemPackage(callbackClass.getName()))
             return;
 
         // Get common Android classes
@@ -993,7 +993,7 @@ public class EntryPointsCreator {
                 if (parentMethod != null)
                     // This is a real callback method
                     this.callbackMethods.put(callbackClass,
-                            new CallbackDefinition(sm, parentMethod, CallbackDefinition.CallbackType.Widget));
+                            new AndroidCallbackDefinition(sm, parentMethod, AndroidCallbackDefinition.CallbackType.Widget));
             }
         }
     }
@@ -1013,7 +1013,7 @@ public class EntryPointsCreator {
     }
 
     boolean needsToBuildCallgraph() {
-        return config.getSootIntegrationMode() == InfoflowAndroidConfiguration.SootIntegrationMode.CreateNewInstace || config.getSootIntegrationMode() == InfoflowAndroidConfiguration.SootIntegrationMode.UseExistingInstance;
+        return config.getSootIntegrationMode() == InfoflowAndroidConfiguration.SootIntegrationMode.CreateNewInstance || config.getSootIntegrationMode() == InfoflowAndroidConfiguration.SootIntegrationMode.UseExistingInstance;
     }
 
 }
