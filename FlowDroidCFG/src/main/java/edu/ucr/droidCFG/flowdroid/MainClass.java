@@ -14,8 +14,8 @@ import soot.jimple.infoflow.InfoflowConfiguration;
 import soot.jimple.infoflow.InfoflowConfiguration.*;
 import soot.jimple.infoflow.android.InfoflowAndroidConfiguration;
 import soot.jimple.infoflow.android.InfoflowAndroidConfiguration.CallbackAnalyzer;
-import soot.jimple.infoflow.android.InfoflowAndroidConfiguration.CallbackSourceMode;
-import soot.jimple.infoflow.android.InfoflowAndroidConfiguration.LayoutMatchingMode;
+import soot.jimple.infoflow.InfoflowConfiguration.CallbackSourceMode;
+import soot.jimple.infoflow.InfoflowConfiguration.LayoutMatchingMode;
 import soot.jimple.infoflow.android.config.XMLConfigurationParser;
 import soot.jimple.infoflow.android.manifest.ProcessManifest;
 import soot.jimple.toolkits.ide.icfg.BackwardsInterproceduralCFG;
@@ -936,7 +936,7 @@ public class MainClass {
         if (cmd.hasOption(OPTION_MERGE_DEX_FILES))
             config.setMergeDexFiles(true);
         if (cmd.hasOption(OPTION_PATH_SPECIFIC_RESULTS))
-            InfoflowConfiguration.setPathAgnosticResults(false);
+            //InfoflowConfiguration.setPathAgnosticResults(false); //Doesn't work!
         if (cmd.hasOption(OPTION_SINGLE_JOIN_POINT))
             config.getSolverConfiguration().setSingleJoinPointAbstraction(true);
         {

@@ -1,13 +1,13 @@
 plugins {
     id 'java'
     id 'java-library'
-    id 'maven'
     id 'maven-publish'
     id 'signing'
+    id "com.github.johnrengelman.shadow" version "6.0.0"
 }
 
 group '$project_group'
-version '$project_version'
+version '1.0.0'
 
 sourceCompatibility = "$javaVersion"
 
@@ -44,17 +44,21 @@ repositories {
     maven {
         url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/"
     }
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
 }
 
 dependencies {
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: commons_lang3_version
-    compile group: 'commons-cli', name: 'commons-cli', version: commons_cli_version
-    implementation 'ca.mcgill.sable:soot:$soot_version:jar-with-dependencies@jar'
-    implementation 'pxb.android:axml:$axml_version'
-    implementation 'heros:heros:$heros_version'
-    implementation group: 'de.tud.sse', name: 'soot-infoflow', version: infoflow_version
-    implementation group: 'de.tud.sse', name: 'soot-infoflow-android', version: infoflow_version
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compileOnly group: 'org.apache.commons', name: 'commons-lang3', version: commons_lang3_version
+    compileOnly group: 'commons-cli', name: 'commons-cli', version: commons_cli_version
+    implementation 'ca.mcgill.sable:soot:'+soot_version+':jar-with-dependencies@jar'
+    implementation 'de.upb.cs.swt:heros:'+heros_version
+    implementation group: 'de.upb.cs.swt', name: 'axml', version: '2.0.0'
+    implementation group: 'de.fraunhofer.sit.sse.flowdroid', name: 'soot-infoflow', version: infoflow_version
+    implementation group: 'de.fraunhofer.sit.sse.flowdroid', name: 'soot-infoflow-summaries', version: infoflow_version
+    implementation group: 'de.fraunhofer.sit.sse.flowdroid', name: 'soot-infoflow-android', version: infoflow_version
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
 }
 /*
 java {
