@@ -2,14 +2,16 @@ plugins {
     id 'java'
     id 'java-library'
     id 'maven-publish'
-    id 'signing'
-    id "com.github.johnrengelman.shadow" version "6.0.0"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
-group '$project_group'
-version '1.0.0'
+group = project_group
+version = '1.0.0'
 
-sourceCompatibility = "$javaVersion"
+java {
+    sourceCompatibility = JavaVersion.toVersion(javaVersion)
+    targetCompatibility = JavaVersion.toVersion(javaVersion)
+}
 
 publishing {
     publications {
@@ -19,83 +21,19 @@ publishing {
     }
 }
 
-/*publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            afterEvaluate {
-                artifactId = jar.archiveBaseName
-            }
-        }
-    }
-    repositories {
-        maven {
-            mavenLocal()
-            def releasesRepoUrl = file("$buildDir/repos/releases")
-            def snapshotsRepoUrl = file("$buildDir/repos/snapshots")
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-        }
-    }
-}*/
 repositories {
     mavenCentral()
     mavenLocal()
-    jcenter()
-    maven {
-        url "https://soot-build.cs.uni-paderborn.de/nexus/repository/soot-release/"
-    }
-    maven {
-        url "https://oss.sonatype.org/content/repositories/snapshots/"
-    }
 }
 
 dependencies {
     compileOnly group: 'org.apache.commons', name: 'commons-lang3', version: commons_lang3_version
     compileOnly group: 'commons-cli', name: 'commons-cli', version: commons_cli_version
-    implementation 'ca.mcgill.sable:soot:'+soot_version+':jar-with-dependencies@jar'
-    implementation 'de.upb.cs.swt:heros:'+heros_version
-    implementation group: 'de.upb.cs.swt', name: 'axml', version: '2.0.0'
+    implementation 'org.soot-oss:soot:' + soot_version + ':jar-with-dependencies@jar'
+    implementation 'de.upb.cs.swt:heros:' + heros_version
+    implementation group: 'de.upb.cs.swt', name: 'axml', version: axml_version
     implementation group: 'de.fraunhofer.sit.sse.flowdroid', name: 'soot-infoflow', version: infoflow_version
     implementation group: 'de.fraunhofer.sit.sse.flowdroid', name: 'soot-infoflow-summaries', version: infoflow_version
     implementation group: 'de.fraunhofer.sit.sse.flowdroid', name: 'soot-infoflow-android', version: infoflow_version
-    testImplementation group: 'junit', name: 'junit', version: '4.12'
+    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
 }
-/*
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
-signing {
-    sign publishing.publications.mavenJava
-}
-
-
-javadoc {
-    if(JavaVersion.current().isJava9Compatible()) {
-        options.addBooleanOption('html5', true)
-    }
-}
-
-
-task sourceJar(type: Jar) {
-    classifier "sources"
-    from sourceSets.main.allJava
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier "javadoc"
-    from javadoc.destinationDir
-}
-
-model {
-    tasks.generatePomFileForMavenJavaPublication {
-        destination = file("$buildDir/generated-pom.xml")
-    }
-}
-
-artifacts {
-    archives jar
-    archives sourceJar
-    archives javadocJar
-}*/
